@@ -42,9 +42,6 @@ class data_source : public m_device
 	
 	void start(void)
 	{
-		//insert the tag into the tagdb
-		m_tagdb::insert_tag(&SomeNumber);
-		
 		//start the module
 		Started = true;
 	}
