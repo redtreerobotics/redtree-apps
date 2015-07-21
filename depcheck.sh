@@ -51,13 +51,11 @@ if [ ! -e "/usr/lib/i386-linux-gnu/libglut.so.3" ] && [ ! -e "/usr/lib/x86_64-li
 fi
 
 # MYSQL
-SQL=$(pkg-config --libs libmysqlclient-dev 2>&1 | grep "not found")
-if [ ! -z "$SQL" ]; then
-        sudo apt-get install libmysqlclient-dev
+if [ ! -e "/usr/bin/mysql_config" ] ; then
+	sudo apt-get install libmysqlclient-dev
 fi
 
 # MYSQL-CONNECTOR
-SQLC=$(pkg-config --libs libmysqlcppconn-dev 2>&1 | grep "not found")
-if [ ! -z "$SQLC" ]; then
-        sudo apt-get install libmysqlcppconn-dev
+if [ ! -e "/usr/include/mysql_connection.h" ] ; then
+	sudo apt-get install libmysqlcppconn-dev
 fi

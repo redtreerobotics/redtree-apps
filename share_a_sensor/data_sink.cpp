@@ -9,48 +9,50 @@
  */
 
 #include <rtr.h>
+#include <rt_types.h>
 #include <rt_ddb_user.h>
 #include <iostream>
 
 using namespace std;
 
-/*
- * Outputs a tag
- */
-void print_tag(m_tag * tag)
+class data_sink : public m_device
 {
-	m_numeric * nt = dynamic_cast<m_numeric*>(tag);
-	if(nt)
+	public:
+		using m_device::m_device;
+		void configure(void){}
+		void initialize(void);
+		void setup(void){}
+		void start(void){Started = true;};
+	private:
+		void main();
+		m_worker<void, void> data_sink_main{this, "data_sink_main", std::bind(&data_sink::main, this)};
+};
+
+void data_sink::main()
+{
+	unsigned int i;
+	vector<m_tag *> tags = get_tag_broadcast("generator.SomeNumber", 1);
+	
+	for(i = 0; i < tags.size(); i++)
 	{
-		cnumber val = nt->get(0,4);
-		if(real(val) != 0)
+		m_tag * t = tags.at(i);
+		m_num<int> *nt = dynamic_cast<m_num<int>*>(t);
+		if(nt != NULL)
 		{
-			Robot_Servos::motor1_power(0);
-			Robot_Servos::motor2_power(0);
-		}
-		else
-		{
-			cnumber val1 = nt->get(0,1);
-			cnumber val2 = nt->get(0,3);
+			int val = *nt;
+			cout << nt->name << ":" << val << endl;
 		}
 	}
 }
 
-void configure(void) {}
-void initialize(void) {}
-void setup(void)
-{	
-	vector<remote_subscription *> s = subscribe_broadcast("controller", 1);
-	//setup subscription for all of the tags we get back
-	for(i = 0; i < (int)s.size(); i++)
-	{
-		m_tag * tag = s.at(i)->get_tag();
-		m_value_simple_subscription sub(&print_tag);
-		tag->subscribe(sub);
-	}	
+void data_sink::initialize()
+{
+	data_sink_main.run_when(Started);
 }
 
-void start(void)
-{
-	Started = true;
-}
+data_sink receiver{"receiver"};
+
+void configure(void){};
+void initialize(void){};
+void setup(void){};
+void start(void){};
