@@ -41,7 +41,7 @@ class data_source : public m_device
 	}
 	
 	void start(void)
-	{
+	{	
 		//start the module
 		Started = true;
 	}
