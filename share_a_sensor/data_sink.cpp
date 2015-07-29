@@ -31,7 +31,7 @@ class data_sink : public m_device
 void data_sink::main()
 {
 	unsigned int i;
-	vector<m_tag *> tags = get_tag_broadcast("generator.SomeNumber", 1);
+	vector<m_tag *> tags = get_tag_broadcast("generator.SomeNumber", 1, 500000);
 	
 	for(i = 0; i < tags.size(); i++)
 	{
